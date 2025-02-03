@@ -20,7 +20,7 @@ import { XIcon } from "lucide-react";
 import { toast } from "sonner";
 import { companySchema } from "@/app/utils/zodSchemas";
 import { useState } from "react";
-import { createCompany } from "@/app/action";
+// import { createCompany } from "@/app/actions";
 
 import {
   Select,
@@ -33,6 +33,7 @@ import {
 } from "@/components/ui/select";
 import { countryList } from "@/app/utils/countriesList";
 import { UploadDropzone } from "@/components/general/UploadThingReExport";
+import { createCompany } from "@/app/action";
 
 export default function CompanyForm() {
   const form = useForm<z.infer<typeof companySchema>>({

@@ -9,11 +9,10 @@ import { redirect } from "next/navigation";
 // import { jobListingDurationPricing } from "./utils/pricingTiers";
 import { revalidatePath } from "next/cache";
 // import arcjet, { detectBot, shield } from "./utils/arcjet";
-// import { request } from "@arcjet/next";
+ import arcjet, { detectBot, request, shield, tokenBucket } from "@arcjet/next"
 // import { inngest } from "./utils/inngest/client";
 
-// const aj = arcjet
-//   .withRule(
+// const aj = arcjet.withRule(
 //     shield({
 //       mode: "LIVE",
 //     })
@@ -24,6 +23,34 @@ import { revalidatePath } from "next/cache";
 //       allow: [],
 //     })
 //   );
+
+const aj = arcjet({
+  key: process.env.ARCJET_KEY!, // Get your site key from https://app.arcjet.com
+  //characteristics: ["ip.src"], // Track requests by IP
+  rules: [
+    // Shield protects your app from common attacks e.g. SQL injection
+    shield({ mode: "LIVE" }),
+    // Create a bot detection rule
+    detectBot({
+      mode: "LIVE", // Blocks requests. Use "DRY_RUN" to log only
+      // Block all bots except the following
+      allow: [
+        //"CATEGORY:SEARCH_ENGINE", // Google, Bing, etc
+        // Uncomment to allow these other common bot categories
+        // See the full list at https://arcjet.com/bot-list
+        //"CATEGORY:MONITOR", // Uptime monitoring services
+        //"CATEGORY:PREVIEW", // Link previews e.g. Slack, Discord
+      ],
+    }),
+    // Create a token bucket rate limit. Other algorithms are supported.
+    // tokenBucket({
+    //   mode: "LIVE",
+    //   refillRate: 5, // Refill 5 tokens per interval
+    //   interval: 10, // Refill every 10 seconds
+    //   capacity: 10, // Bucket capacity of 10 tokens
+    // }),
+  ],
+});
 
 export async function createCompany(data: z.infer<typeof companySchema>) {
   const session = await requireUser();
@@ -60,60 +87,61 @@ export async function createCompany(data: z.infer<typeof companySchema>) {
   return redirect("/");
 }
 
-// export async function createJobSeeker(data: z.infer<typeof jobSeekerSchema>) {
-//   const user = await requireUser();
+export async function createJobSeeker(data: z.infer<typeof jobSeekerSchema>) {
+  const user = await requireUser();
 
-//   // Access the request object so Arcjet can analyze it
-//   const req = await request();
-//   // Call Arcjet protect
-//   const decision = await aj.protect(req);
+  // Access the request object so Arcjet can analyze it
+  const req = await request();
+  // Call Arcjet protect
+  const decision = await aj.protect(req);
 
-//   if (decision.isDenied()) {
-//     throw new Error("Forbidden");
-//   }
+  if (decision.isDenied()) {
+    throw new Error("Forbidden");
+  }
 
-//   const validatedData = jobSeekerSchema.parse(data);
+  const validatedData = jobSeekerSchema.parse(data);
 
-//   await prisma.user.update({
-//     where: {
-//       id: user.id,
-//     },
-//     data: {
-//       onboardingCompleted: true,
-//       userType: "JOB_SEEKER",
-//       JobSeeker: {
-//         create: {
-//           ...validatedData,
-//         },
-//       },
-//     },
-//   });
+  await prisma.user.update({
+    where: {
+      id: user.id,
+    },
+    data: {
+      onboardingCompleted: true,
+      userType: "JOB_SEEKER",
+      JobSeeker: {
+        create: {
+          ...validatedData,
+        },
+      },
+    },
+  });
 
-//   return redirect("/");
-// }
+  return redirect("/");
+}
 
-// export async function createJob(data: z.infer<typeof jobSchema>) {
-//   const user = await requireUser();
+export async function createJob(data: z.infer<typeof jobSchema>) {
+  alert("Job created")
+  // const user = await requireUser();
 
-//   const validatedData = jobSchema.parse(data);
+  // const validatedData = jobSchema.parse(data);
 
-//   const company = await prisma.company.findUnique({
-//     where: {
-//       userId: user.id,
-//     },
-//     select: {
-//       id: true,
-//       user: {
-//         select: {
-//           stripeCustomerId: true,
-//         },
-//       },
-//     },
-//   });
+  // const company = await prisma.company.findUnique({
+  //   where: {
+  //     userId: user.id,
+  //   },
+  //   select: {
+  //     id: true,
+  //     user: {
+  //       select: {
+  //         stripeCustomerId: true,
+  //       },
+  //     },
+  //   },
+  // });
 
-//   if (!company?.id) {
-//     return redirect("/");
-//   }
+  // if (!company?.id) {
+  //   return redirect("/");
+  // }
 
 //   let stripeCustomerId = company.user.stripeCustomerId;
 
@@ -265,4 +293,4 @@ export async function createCompany(data: z.infer<typeof companySchema>) {
 //   });
 
 //   revalidatePath(`/job/${data.jobId}`);
-// }
+ }

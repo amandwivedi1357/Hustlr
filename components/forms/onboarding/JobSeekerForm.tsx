@@ -22,7 +22,7 @@ import { XIcon } from "lucide-react";
 import PDFImage from "@/public/pdf.png";
 import Image from "next/image";
 import { UploadDropzone } from "@/components/general/UploadThingReExport";
-// import { createJobSeeker } from "@/app/action";
+import { createJobSeeker } from "@/app/action";
 
 export default function JobSeekerForm() {
   const form = useForm<z.infer<typeof jobSeekerSchema>>({
@@ -37,7 +37,7 @@ export default function JobSeekerForm() {
   async function onSubmit(values: z.infer<typeof jobSeekerSchema>) {
     try {
       setPending(true);
-    //   await createJobSeeker(values);
+      await createJobSeeker(values);
     } catch (error) {
       if (error instanceof Error && error.message !== "NEXT_REDIRECT") {
         toast.error("Something went wrong. Please try again.");
