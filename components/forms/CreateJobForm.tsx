@@ -36,6 +36,9 @@ import { SalaryRangeSelector } from "../general/SalaryRangeSelector";
 // import BenefitsSelector from "../general/BenefitsSelector";
 // import { JobListingDurationSelector } from "../general/JobListingDurationSelector";
 import { createJob } from "@/app/action";
+import JobDescriptionEditor from "../richTextEditor/JobDescriptionEditor";
+import BenefitsSelector from "../general/BenefitsSelector";
+import { JobListingDurationSelector } from "../general/JobListingDurationSelector";
 
 interface CreateJobFormProps {
   companyName: string;
@@ -207,7 +210,7 @@ export function CreateJobForm({
                 <FormItem>
                   <FormLabel>Job Description</FormLabel>
                   <FormControl>
-                    {/* <JobDescriptionEditor field={field} /> */}
+                    <JobDescriptionEditor field={field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -221,7 +224,7 @@ export function CreateJobForm({
                 <FormItem>
                   <FormLabel>Benefits</FormLabel>
                   <FormControl>
-                    {/* <BenefitsSelector field={field} /> */}
+                    <BenefitsSelector field={field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -417,7 +420,7 @@ export function CreateJobForm({
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    {/* <JobListingDurationSelector field={field} /> */}
+                    <JobListingDurationSelector field={field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

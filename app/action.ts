@@ -10,6 +10,7 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 // import arcjet, { detectBot, shield } from "./utils/arcjet";
  import arcjet, { detectBot, request, shield, tokenBucket } from "@arcjet/next"
+import { jobListingDurationPricing } from "./utils/pricingTiers";
 // import { inngest } from "./utils/inngest/client";
 
 // const aj = arcjet.withRule(
@@ -120,28 +121,30 @@ export async function createJobSeeker(data: z.infer<typeof jobSeekerSchema>) {
 }
 
 export async function createJob(data: z.infer<typeof jobSchema>) {
-  alert("Job created")
-  // const user = await requireUser();
 
-  // const validatedData = jobSchema.parse(data);
+ 
+ 
+  const user = await requireUser();
 
-  // const company = await prisma.company.findUnique({
-  //   where: {
-  //     userId: user.id,
-  //   },
-  //   select: {
-  //     id: true,
-  //     user: {
-  //       select: {
-  //         stripeCustomerId: true,
-  //       },
-  //     },
-  //   },
-  // });
+  const validatedData = jobSchema.parse(data);
 
-  // if (!company?.id) {
-  //   return redirect("/");
-  // }
+  const company = await prisma.company.findUnique({
+    where: {
+      userId: user.id,
+    },
+    // select: {
+    //   id: true,
+    //   user: {
+    //     select: {
+    //        stripeCustomerId: true,
+    //     },
+    //   },
+    // },
+  });
+
+  if (!company?.id) {
+    return redirect("/");
+  }
 
 //   let stripeCustomerId = company.user.stripeCustomerId;
 
@@ -160,33 +163,33 @@ export async function createJob(data: z.infer<typeof jobSchema>) {
 //     });
 //   }
 
-//   const jobPost = await prisma.jobPost.create({
-//     data: {
-//       companyId: company.id,
-//       jobDescription: validatedData.jobDescription,
-//       jobTitle: validatedData.jobTitle,
-//       employmentType: validatedData.employmentType,
-//       location: validatedData.location,
-//       salaryFrom: validatedData.salaryFrom,
-//       salaryTo: validatedData.salaryTo,
-//       listingDuration: validatedData.listingDuration,
-//       benefits: validatedData.benefits,
-//     },
-//   });
+  const jobPost = await prisma.jobPost.create({
+    data: {
+      companyId: company.id,
+      jobDescription: validatedData.jobDescription,
+      jobTitle: validatedData.jobTitle,
+      employmentType: validatedData.employmentType,
+      location: validatedData.location,
+      salaryFrom: validatedData.salaryFrom,
+      salaryTo: validatedData.salaryTo,
+      listingDuration: validatedData.listingDuration,
+      benefits: validatedData.benefits,
+    },
+  });
 
-//   // Trigger the job expiration function
-//   await inngest.send({
-//     name: "job/created",
-//     data: {
-//       jobId: jobPost.id,
-//       expirationDays: validatedData.listingDuration,
-//     },
-//   });
+  // Trigger the job expiration function
+  // await inngest.send({
+  //   name: "job/created",
+  //   data: {
+  //     jobId: jobPost.id,
+  //     expirationDays: validatedData.listingDuration,
+  //   },
+  // });
 
-//   // Get price from pricing tiers based on duration
-//   const pricingTier = jobListingDurationPricing.find(
-//     (tier) => tier.days === validatedData.listingDuration
-//   );
+  // Get price from pricing tiers based on duration
+  const pricingTier = jobListingDurationPricing.find(
+    (tier) => tier.days === validatedData.listingDuration
+  );
 
 //   if (!pricingTier) {
 //     throw new Error("Invalid listing duration selected");
@@ -248,8 +251,9 @@ export async function createJob(data: z.infer<typeof jobSchema>) {
 //     },
 //   });
 
-//   return redirect("/my-jobs");
-// }
+   //return redirect("/my-jobs");
+   return redirect("/");
+ }
 
 // export async function deleteJobPost(jobId: string) {
 //   const user = await requireUser();
@@ -293,4 +297,4 @@ export async function createJob(data: z.infer<typeof jobSchema>) {
 //   });
 
 //   revalidatePath(`/job/${data.jobId}`);
- }
+ //}
