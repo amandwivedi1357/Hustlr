@@ -11,6 +11,7 @@ import { revalidatePath } from "next/cache";
 // import arcjet, { detectBot, shield } from "./utils/arcjet";
  import arcjet, { detectBot, request, shield, tokenBucket } from "@arcjet/next"
 import { jobListingDurationPricing } from "./utils/pricingTiers";
+import { inngest } from "./utils/inngest/client";
 // import { inngest } from "./utils/inngest/client";
 
 // const aj = arcjet.withRule(
@@ -178,13 +179,13 @@ export async function createJob(data: z.infer<typeof jobSchema>) {
   });
 
   // Trigger the job expiration function
-  // await inngest.send({
-  //   name: "job/created",
-  //   data: {
-  //     jobId: jobPost.id,
-  //     expirationDays: validatedData.listingDuration,
-  //   },
-  // });
+  await inngest.send({
+    name: "job/created",
+    data: {
+      jobId: jobPost.id,
+      expirationDays: validatedData.listingDuration,
+    },
+  });
 
   // Get price from pricing tiers based on duration
   const pricingTier = jobListingDurationPricing.find(
