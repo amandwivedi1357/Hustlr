@@ -64,7 +64,7 @@ async function getJobs(
 export default async function JobListings({
   currentPage,
   jobTypes,
-  location,
+  location
 }: {
   currentPage: number;
   jobTypes: string[];

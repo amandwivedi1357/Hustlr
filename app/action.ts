@@ -6,13 +6,10 @@ import { companySchema, jobSchema, jobSeekerSchema } from "./utils/zodSchemas";
 import { prisma } from "./utils/db";
 import { redirect } from "next/navigation";
 // import { stripe } from "./utils/stripe";
-// import { jobListingDurationPricing } from "./utils/pricingTiers";
 import { revalidatePath } from "next/cache";
-// import arcjet, { detectBot, shield } from "./utils/arcjet";
  import arcjet, { detectBot, request, shield, tokenBucket } from "@arcjet/next"
 import { jobListingDurationPricing } from "./utils/pricingTiers";
 import { inngest } from "./utils/inngest/client";
-// import { inngest } from "./utils/inngest/client";
 
 // const aj = arcjet.withRule(
 //     shield({
@@ -256,46 +253,46 @@ export async function createJob(data: z.infer<typeof jobSchema>) {
    return redirect("/");
  }
 
-// export async function deleteJobPost(jobId: string) {
-//   const user = await requireUser();
+export async function deleteJobPost(jobId: string) {
+  const user = await requireUser();
 
-//   await prisma.jobPost.delete({
-//     where: {
-//       id: jobId,
-//       company: {
-//         userId: user.id,
-//       },
-//     },
-//   });
+  await prisma.jobPost.delete({
+    where: {
+      id: jobId,
+      company: {
+        userId: user.id,
+      },
+    },
+  });
 
-//   return redirect("/my-jobs");
-// }
+  return redirect("/my-jobs");
+}
 
-// export async function saveJobPost(jobId: string) {
-//   const user = await requireUser();
+export async function saveJobPost(jobId: string) {
+  const user = await requireUser();
 
-//   await prisma.savedJobPost.create({
-//     data: {
-//       jobId: jobId,
-//       userId: user.id as string,
-//     },
-//   });
+  await prisma.savedJobPost.create({
+    data: {
+      jobId: jobId,
+      userId: user.id as string,
+    },
+  });
 
-//   revalidatePath(`/job/${jobId}`);
-// }
+  revalidatePath(`/job/${jobId}`);
+}
 
-// export async function unsaveJobPost(savedJobPostId: string) {
-//   const user = await requireUser();
+export async function unsaveJobPost(savedJobPostId: string) {
+  const user = await requireUser();
 
-//   const data = await prisma.savedJobPost.delete({
-//     where: {
-//       id: savedJobPostId,
-//       userId: user.id as string,
-//     },
-//     select: {
-//       jobId: true,
-//     },
-//   });
+  const data = await prisma.savedJobPost.delete({
+    where: {
+      id: savedJobPostId,
+      userId: user.id as string,
+    },
+    select: {
+      jobId: true,
+    },
+  });
 
-//   revalidatePath(`/job/${data.jobId}`);
- //}
+  revalidatePath(`/job/${data.jobId}`);
+ }
