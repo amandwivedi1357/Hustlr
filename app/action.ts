@@ -10,6 +10,7 @@ import { revalidatePath } from "next/cache";
  import arcjet, { detectBot, request, shield, tokenBucket } from "@arcjet/next"
 import { jobListingDurationPricing } from "./utils/pricingTiers";
 import { inngest } from "./utils/inngest/client";
+import { stripe } from "./utils/stripe";
 
 // const aj = arcjet.withRule(
 //     shield({
@@ -130,36 +131,36 @@ export async function createJob(data: z.infer<typeof jobSchema>) {
     where: {
       userId: user.id,
     },
-    // select: {
-    //   id: true,
-    //   user: {
-    //     select: {
-    //        stripeCustomerId: true,
-    //     },
-    //   },
-    // },
+    select: {
+      id: true,
+      user: {
+        select: {
+           stripeCustomerId: true,
+        },
+      },
+    },
   });
 
   if (!company?.id) {
     return redirect("/");
   }
 
-//   let stripeCustomerId = company.user.stripeCustomerId;
+  let stripeCustomerId = company.user.stripeCustomerId;
 
-//   if (!stripeCustomerId) {
-//     const customer = await stripe.customers.create({
-//       email: user.email!,
-//       name: user.name || undefined,
-//     });
+  if (!stripeCustomerId) {
+    const customer = await stripe.customers.create({
+      email: user.email!,
+      name: user.name || undefined,
+    });
 
-//     stripeCustomerId = customer.id;
+    stripeCustomerId = customer.id;
 
-//     // Update user with Stripe customer ID
-//     await prisma.user.update({
-//       where: { id: user.id },
-//       data: { stripeCustomerId: customer.id },
-//     });
-//   }
+    // Update user with Stripe customer ID
+    await prisma.user.update({
+      where: { id: user.id },
+      data: { stripeCustomerId: customer.id },
+    });
+  }
 
   const jobPost = await prisma.jobPost.create({
     data: {
@@ -189,38 +190,38 @@ export async function createJob(data: z.infer<typeof jobSchema>) {
     (tier) => tier.days === validatedData.listingDuration
   );
 
-//   if (!pricingTier) {
-//     throw new Error("Invalid listing duration selected");
-//   }
+  if (!pricingTier) {
+    throw new Error("Invalid listing duration selected");
+  }
 
-//   const session = await stripe.checkout.sessions.create({
-//     customer: stripeCustomerId,
-//     line_items: [
-//       {
-//         price_data: {
-//           product_data: {
-//             name: `Job Posting - ${pricingTier.days} Days`,
-//             description: pricingTier.description,
-//             images: [
-//               "https://pve1u6tfz1.ufs.sh/f/Ae8VfpRqE7c0gFltIEOxhiBIFftvV4DTM8a13LU5EyzGb2SQ",
-//             ],
-//           },
-//           currency: "USD",
-//           unit_amount: pricingTier.price * 100, // Convert to cents for Stripe
-//         },
-//         quantity: 1,
-//       },
-//     ],
-//     mode: "payment",
-//     metadata: {
-//       jobId: jobPost.id,
-//     },
-//     success_url: `${process.env.NEXT_PUBLIC_URL}/payment/success`,
-//     cancel_url: `${process.env.NEXT_PUBLIC_URL}/payment/cancel`,
-//   });
+  const session = await stripe.checkout.sessions.create({
+    customer: stripeCustomerId,
+    line_items: [
+      {
+        price_data: {
+          product_data: {
+            name: `Job Posting - ${pricingTier.days} Days`,
+            description: pricingTier.description,
+            images: [
+              "https://pve1u6tfz1.ufs.sh/f/Ae8VfpRqE7c0gFltIEOxhiBIFftvV4DTM8a13LU5EyzGb2SQ",
+            ],
+          },
+          currency: "USD",
+          unit_amount: pricingTier.price * 100, // Convert to cents for Stripe
+        },
+        quantity: 1,
+      },
+    ],
+    mode: "payment",
+    metadata: {
+      jobId: jobPost.id,
+    },
+    success_url: `${process.env.NEXT_PUBLIC_URL}/payment/success`,
+    cancel_url: `${process.env.NEXT_PUBLIC_URL}/payment/cancel`,
+  });
 
-//   return redirect(session.url as string);
-// }
+  return redirect(session.url as string);
+}
 
 // export async function updateJobPost(
 //   data: z.infer<typeof jobSchema>,
@@ -250,8 +251,8 @@ export async function createJob(data: z.infer<typeof jobSchema>) {
 //   });
 
    //return redirect("/my-jobs");
-   return redirect("/");
- }
+   //return redirect("/");
+ //}
 
 export async function deleteJobPost(jobId: string) {
   const user = await requireUser();

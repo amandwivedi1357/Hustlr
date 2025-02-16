@@ -29,7 +29,7 @@ model User {
 
   userType UserType?
 
-  // stripeCustomerId String? @unique
+   stripeCustomerId String? @unique
 
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt
