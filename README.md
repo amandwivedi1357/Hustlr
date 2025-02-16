@@ -1,36 +1,108 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Hustlr - Modern Job Board Platform
 
-## Getting Started
+## 🚀 Project Overview
 
-First, run the development server:
+Hustlr is a cutting-edge job board platform designed to connect talented job seekers with innovative companies. Built with modern web technologies, Hustlr offers a seamless and intuitive experience for both employers and job seekers.
 
+![Project Banner](https://placeholder.com/job-board-banner.png)
+
+## ✨ Features
+
+### For Employers
+- 🏢 Create and manage job listings
+- 💳 Integrated Stripe payment for job postings
+- 📊 Track job applications
+- 🔒 Secure authentication and authorization
+
+### For Job Seekers
+- 🔍 Browse and search job listings
+- 💾 Save favorite job posts
+- 📝 Easy application process
+
+## 🛠 Tech Stack
+
+- **Frontend**: Next.js 14
+- **Backend**: Prisma ORM
+- **Authentication**: NextAuth.js
+- **Payments**: Stripe
+- **Database**: PostgreSQL
+- **Styling**: Tailwind CSS
+- **Deployment**: Vercel
+
+## 📦 Prerequisites
+
+- Node.js (v18+ recommended)
+- npm or yarn
+- PostgreSQL database
+- Stripe account
+
+## 🚦 Getting Started
+
+### 1. Clone the Repository
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/yourusername/hustlr.git
+cd hustlr
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2. Install Dependencies
+```bash
+npm install
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 3. Set Up Environment Variables
+Create a `.env` file with the following variables:
+```
+DATABASE_URL=your_postgres_connection_string
+NEXTAUTH_SECRET=your_nextauth_secret
+STRIPE_SECRET_KEY=your_stripe_secret_key
+STRIPE_WEBHOOK_SECRET=your_stripe_webhook_secret
+NEXT_PUBLIC_URL=http://localhost:3000
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 4. Run Database Migrations
+```bash
+npx prisma migrate dev
+```
 
-## Learn More
+### 5. Start Development Server
+```bash
+npm run dev
+```
 
-To learn more about Next.js, take a look at the following resources:
+## 🔐 Environment Setup
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Stripe Configuration
+1. Create a Stripe account
+2. Get your API keys from Stripe Dashboard
+3. Set up webhook endpoint: `{YOUR_DOMAIN}/api/webhook/stripe`
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Database
+- Supports PostgreSQL
+- ORM: Prisma
+- Automatic schema migrations
 
-## Deploy on Vercel
+## 🤝 Contributing
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 🐛 Reporting Issues
+
+Report issues on our [GitHub Issues](https://github.com/yourusername/hustlr/issues) page.
+
+## 📄 License
+
+Distributed under the MIT License. See `LICENSE` for more information.
+
+## 📞 Contact
+
+Your Name - [Your Email]
+
+Project Link: [https://github.com/yourusername/hustlr](https://github.com/yourusername/hustlr)
+
+---
+
+**Built with ❤️ by [Your Name/Organization]**
