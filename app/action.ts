@@ -7,7 +7,7 @@ import { prisma } from "./utils/db";
 import { redirect } from "next/navigation";
 // import { stripe } from "./utils/stripe";
 import { revalidatePath } from "next/cache";
- import arcjet, { detectBot, request, shield } from "@arcjet/next"
+ import arcjet, { detectBot, request, shield } from "@arcjet/next" // eslint-disable-line @typescript-eslint/no-unused-vars
 import { jobListingDurationPricing } from "./utils/pricingTiers";
 import { inngest } from "./utils/inngest/client";
 import { stripe } from "./utils/stripe";
