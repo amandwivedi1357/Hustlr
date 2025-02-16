@@ -134,9 +134,9 @@ export async function createJob(data: z.infer<typeof jobSchema>) {
     select: {
       id: true,
       user: {
-        select: {
-           stripeCustomerId: true,
-        },
+        select:{
+          stripeCustomerId:true
+        }
       },
     },
   });
@@ -223,36 +223,35 @@ export async function createJob(data: z.infer<typeof jobSchema>) {
   return redirect(session.url as string);
 }
 
-// export async function updateJobPost(
-//   data: z.infer<typeof jobSchema>,
-//   jobId: string
-// ) {
-//   const user = await requireUser();
+export async function updateJobPost(
+  data: z.infer<typeof jobSchema>,
+  jobId: string
+) {
+  const user = await requireUser();
 
-//   const validatedData = jobSchema.parse(data);
+  const validatedData = jobSchema.parse(data);
 
-//   await prisma.jobPost.update({
-//     where: {
-//       id: jobId,
-//       company: {
-//         userId: user.id,
-//       },
-//     },
-//     data: {
-//       jobDescription: validatedData.jobDescription,
-//       jobTitle: validatedData.jobTitle,
-//       employmentType: validatedData.employmentType,
-//       location: validatedData.location,
-//       salaryFrom: validatedData.salaryFrom,
-//       salaryTo: validatedData.salaryTo,
-//       listingDuration: validatedData.listingDuration,
-//       benefits: validatedData.benefits,
-//     },
-//   });
+  await prisma.jobPost.update({
+    where: {
+      id: jobId,
+      company: {
+        userId: user.id,
+      },
+    },
+    data: {
+      jobDescription: validatedData.jobDescription,
+      jobTitle: validatedData.jobTitle,
+      employmentType: validatedData.employmentType,
+      location: validatedData.location,
+      salaryFrom: validatedData.salaryFrom,
+      salaryTo: validatedData.salaryTo,
+      listingDuration: validatedData.listingDuration,
+      benefits: validatedData.benefits,
+    },
+  });
 
-   //return redirect("/my-jobs");
-   //return redirect("/");
- //}
+   return redirect("/my-jobs");
+ }
 
 export async function deleteJobPost(jobId: string) {
   const user = await requireUser();
