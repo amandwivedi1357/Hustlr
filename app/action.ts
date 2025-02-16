@@ -7,7 +7,7 @@ import { prisma } from "./utils/db";
 import { redirect } from "next/navigation";
 // import { stripe } from "./utils/stripe";
 import { revalidatePath } from "next/cache";
- import arcjet, { detectBot, request, shield, tokenBucket } from "@arcjet/next"
+ import arcjet, { detectBot, request, shield } from "@arcjet/next"
 import { jobListingDurationPricing } from "./utils/pricingTiers";
 import { inngest } from "./utils/inngest/client";
 import { stripe } from "./utils/stripe";
