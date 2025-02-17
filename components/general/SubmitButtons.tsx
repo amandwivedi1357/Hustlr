@@ -4,6 +4,7 @@ import { useFormStatus } from "react-dom";
 import { Button } from "../ui/button";
 import { Heart, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { useState } from "react";
 
 export function GeneralSubmitButton({
   text,
@@ -23,6 +24,7 @@ export function GeneralSubmitButton({
   width?: string;
 }) {
   const { pending } = useFormStatus();
+  const [isApplied, setIsApplied] = useState(false);
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault(); // Prevent default form submission
@@ -33,17 +35,22 @@ export function GeneralSubmitButton({
       duration: 3000,
       position: 'bottom-right',
     });
+
+    // Set applied state
+    setIsApplied(true);
   };
 
   return (
     <Button
       type="submit"
       variant={variant}
-      disabled={pending}
+      disabled={pending || isApplied}
       className={width}
       onClick={handleSubmit}
     >
-      {pending ? (
+      {isApplied ? (
+        "Applied"
+      ) : pending ? (
         <>
           <Loader2 className="w-4 h-4 animate-spin " />
           <span>Submitting...</span>
