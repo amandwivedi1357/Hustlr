@@ -3,7 +3,6 @@
 import { useFormStatus } from "react-dom";
 import { Button } from "../ui/button";
 import { Heart, Loader2 } from "lucide-react";
-import { toast } from "sonner";
 
 export function GeneralSubmitButton({
   text,
@@ -24,24 +23,12 @@ export function GeneralSubmitButton({
 }) {
   const { pending } = useFormStatus();
 
-  const handleSubmit = (event: React.FormEvent) => {
-    event.preventDefault(); // Prevent default form submission
-    
-    // Show toast notification
-    toast.success('Application Submitted', {
-      description: 'Your job application has been successfully submitted.',
-      duration: 3000,
-      position: 'bottom-right',
-    });
-  };
-
   return (
     <Button
       type="submit"
       variant={variant}
       disabled={pending}
       className={width}
-      onClick={handleSubmit}
     >
       {pending ? (
         <>
