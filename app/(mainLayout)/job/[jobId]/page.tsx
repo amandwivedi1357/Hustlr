@@ -192,7 +192,14 @@ const JobIdPage = async ({ params }: { params: Params }) => {
               </div>
               <form>
                 <input type="hidden" name="jobId" value={jobId} />
-                <GeneralSubmitButton text="Apply now" />
+                <GeneralSubmitButton 
+  text="Apply" 
+  showToast={true}
+  toastMessage={{
+    success: 'Job application sent!',
+    error: 'Failed to submit application'
+  }} 
+/>
               </form>
             </div>
           </Card>
