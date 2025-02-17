@@ -79,7 +79,7 @@ export function JobFilters() {
   };
 
   return (
-    <div className="space-y-6">
+    <Card className="space-y-6 hover:shadow-lg transition-all duration-300 p-5 hover:border-emerald-500">
       <div className="flex justify-between items-center">
         <h2 className="text-lg font-semibold">Filters</h2>
         <Button
@@ -174,6 +174,6 @@ export function JobFilters() {
           </div>
         </div>
       </div>
-    </div>
+    </Card>
   );
 }
