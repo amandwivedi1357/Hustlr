@@ -79,7 +79,7 @@ export default async function JobListings({
   return (
     <>
       {jobs.length > 0 ? (
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-4 sm:gap-6">
           {jobs.map((job, index) => (
             <JobCard job={job} key={index} />
           ))}
@@ -93,7 +93,7 @@ export default async function JobListings({
         />
       )}
 
-      <div className="flex justify-center mt-6">
+      <div className="flex justify-center mt-4 sm:mt-6">
         <PaginationComponent totalPages={totalPages} currentPage={page} />
       </div>
     </>
