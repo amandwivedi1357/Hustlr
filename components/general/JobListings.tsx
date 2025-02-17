@@ -74,7 +74,7 @@ export default async function JobListings({
     jobs,
     totalPages,
     currentPage: page,
-  } = await getJobs(currentPage, 7, jobTypes, location);
+  } = await getJobs(currentPage, 5, jobTypes, location);
 
   return (
     <>
