@@ -1,6 +1,7 @@
 import { prisma } from "@/app/utils/db";
 import { stripe } from "@/app/utils/stripe";
 import { headers } from "next/headers";
+import { JobPostStatus } from "@prisma/client";
 import Stripe from "stripe";
 
 export async function POST(req: Request) {
@@ -18,7 +19,8 @@ export async function POST(req: Request) {
       signature,
       process.env.STRIPE_WEBHOOK_SECRET as string
     );
-  } catch {
+  } catch (err) {
+    console.error("Webhook verification failed:", err);
     return new Response("Webhook error", { status: 400 });
   }
 
@@ -28,37 +30,54 @@ export async function POST(req: Request) {
     const customerId = session.customer as string;
     const jobId = session.metadata?.jobId;
 
+    console.log("Webhook received for job ID:", jobId);
+    console.log("Available job status values:", Object.values(JobPostStatus));
+
     if (!jobId) {
       console.error("No job ID found in session metadata");
       return new Response("No job ID found", { status: 400 });
     }
 
-    const company = await prisma.user.findUnique({
-      where: {
-        stripeCustomerId: customerId,
-      },
-      select:{
-        Company:{
-          select:{
-            id:true
+    try {
+      const company = await prisma.user.findUnique({
+        where: {
+          stripeCustomerId: customerId,
+        },
+        select:{
+          Company:{
+            select:{
+              id:true
+            }
           }
         }
+      });
+
+      if (!company) {
+        console.error("Company not found for customer ID:", customerId);
+        throw new Error("User not found...");
       }
-    });
 
-    if (!company) throw new Error("User not found...");
+      // Update the job post status to ACTIVE
+      const updatedJob = await prisma.jobPost.update({
+        where: {
+          id: jobId,
+          companyId: company?.Company?.id as string
+        },
+        data: {
+          status: JobPostStatus.ACTIVE, // Use the enum directly
+        },
+        select: {
+          id: true,
+          status: true,
+          companyId: true
+        }
+      });
 
-    // Update the job post status to PUBLISHED
-    await prisma.jobPost.update({
-      where: {
-        id: jobId,
-        companyId:company?.Company?.id as string
-         // Ensure the job belongs to the user
-      },
-      data: {
-        status: "ACTIVE",
-      },
-    });
+      console.log("Job updated successfully:", updatedJob);
+    } catch (error) {
+      console.error("Error updating job status:", error);
+      return new Response("Update failed", { status: 500 });
+    }
   }
 
   return new Response(null, { status: 200 });

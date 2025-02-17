@@ -3,12 +3,18 @@
 import { useFormStatus } from "react-dom";
 import { Button } from "../ui/button";
 import { Heart, Loader2 } from "lucide-react";
+import { toast } from "sonner";
 
 export function GeneralSubmitButton({
   text,
   icon,
   variant,
   width = "w-full",
+  showToast = false,
+  toastMessage = {
+    success: 'Submitted successfully',
+    error: 'Submission failed'
+  }
 }: {
   text: string;
   icon?: React.ReactNode;
@@ -20,8 +26,30 @@ export function GeneralSubmitButton({
     | "ghost"
     | "link";
   width?: string;
+  showToast?: boolean;
+  toastMessage?: {
+    success: string;
+    error: string;
+  };
 }) {
   const { pending } = useFormStatus();
+
+  const handleSubmit = (event: React.FormEvent) => {
+    if (showToast) {
+      try {
+        // Placeholder for potential submission logic
+        toast.success(toastMessage.success, {
+          duration: 3000,
+          position: 'bottom-right',
+        });
+      } catch (error) {
+        toast.error(toastMessage.error, {
+          duration: 3000,
+          position: 'bottom-right',
+        });
+      }
+    }
+  };
 
   return (
     <Button
@@ -29,6 +57,7 @@ export function GeneralSubmitButton({
       variant={variant}
       disabled={pending}
       className={width}
+      onClick={handleSubmit}
     >
       {pending ? (
         <>
