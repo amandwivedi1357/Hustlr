@@ -39,20 +39,12 @@ export async function POST(req: Request) {
     }
 
     try {
-      const company = await prisma.user.findUnique({
-        where: {
-          stripeCustomerId: customerId,
-        },
-        select:{
-          Company:{
-            select:{
-              id:true
-            }
-          }
-        }
+      const user = await prisma.user.findUnique({
+        where: { stripeCustomerId: customerId },
+        include: { Company: true } // This will include the entire Company object
       });
 
-      if (!company) {
+      if (!user?.Company) {
         console.error("Company not found for customer ID:", customerId);
         throw new Error("User not found...");
       }
@@ -61,15 +53,10 @@ export async function POST(req: Request) {
       const updatedJob = await prisma.jobPost.update({
         where: {
           id: jobId,
-          companyId: company?.Company?.id as string
+          companyId: user?.Company?.id as string// Use the company ID directly
         },
         data: {
-          status: JobPostStatus.ACTIVE, // Use the enum directly
-        },
-        select: {
-          id: true,
-          status: true,
-          companyId: true
+          status: JobPostStatus.ACTIVE,
         }
       });
 

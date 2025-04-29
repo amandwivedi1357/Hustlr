@@ -11,6 +11,7 @@ import { revalidatePath } from "next/cache";
 import { jobListingDurationPricing } from "./utils/pricingTiers";
 import { inngest } from "./utils/inngest/client";
 import { stripe } from "./utils/stripe";
+import { JobPostStatus } from "@prisma/client";
 
 // const aj = arcjet.withRule(
 //     shield({
@@ -173,6 +174,7 @@ export async function createJob(data: z.infer<typeof jobSchema>) {
       salaryTo: validatedData.salaryTo,
       listingDuration: validatedData.listingDuration,
       benefits: validatedData.benefits,
+      status: JobPostStatus.ACTIVE,
     },
   });
 
@@ -256,14 +258,14 @@ export async function updateJobPost(
 export async function deleteJobPost(jobId: string) {
   const user = await requireUser();
 
-  await prisma.jobPost.delete({
+  await prisma.jobPost.update({
     where: {
       id: jobId,
-      company: {
-        userId: user.id,
-      },
     },
-  });
+    data: {
+      status: JobPostStatus.EXPIRED
+    }
+  })
 
   return redirect("/my-jobs");
 }

@@ -5,7 +5,7 @@ import { UploadThingError } from "uploadthing/server";
 
 const f = createUploadthing();
 
-// FileRouter for your app, can contain multiple FileRoutes
+// FileRouter for uploadthing, can contain multiple FileRoutes
 export const OurFileRouter = {
   // Define as many FileRoutes as you like, each with a unique routeSlug
   imageUploader: f({
